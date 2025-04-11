@@ -1,0 +1,44 @@
+# Network AI Assistant Configuration
+
+# Application Settings
+app:
+  name: "Network AI Assistant"
+  version: "0.1.0"
+  description: "An agentic AI solution for network management and troubleshooting"
+  debug: true
+  log_level: "INFO"
+
+# Model Settings
+models:
+  default: "HuggingFace/distilbert-base-uncased"
+  alternatives:
+    - "HuggingFace/roberta-base"
+  cache_dir: "./model_cache"
+  device: "auto"  # "auto", "cpu", or "cuda"
+
+# Agent Settings
+agent:
+  memory_limit: 10  # Number of conversation turns to remember
+  planning:
+    enabled: true
+    max_steps: 5
+  tools:
+    enabled: true
+
+# Streamlit Settings
+streamlit:
+  theme:
+    primary_color: "#1E88E5"
+    background_color: "#FFFFFF"
+    text_color: "#262730"
+  page_title: "Network AI Assistant"
+  page_icon: "🌐"
+  layout: "wide"
+  initial_sidebar_state: "expanded"
+
+# Network Tools Settings
+network_tools:
+  knowledge_base_path: "./data/knowledge_base.json"
+  anomaly_detection:
+    sensitivity: "medium"  # "low", "medium", "high"
+    threshold: 0.7

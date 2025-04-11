@@ -1,0 +1,193 @@
+{
+  "version": "0.1.0",
+  "last_updated": "2023-07-15",
+  "entries": [
+    {
+      "id": "NW001",
+      "issue": "high latency",
+      "symptoms": [
+        "slow response time",
+        "packet delay",
+        "timeout",
+        "high ping times",
+        "buffering"
+      ],
+      "causes": [
+        "network congestion",
+        "insufficient bandwidth",
+        "routing issues",
+        "hardware limitations",
+        "distance between nodes"
+      ],
+      "solutions": [
+        "Check for bandwidth-intensive applications and limit their usage",
+        "Implement QoS (Quality of Service) policies to prioritize critical traffic",
+        "Optimize routing tables for more efficient paths",
+        "Upgrade network hardware if it's causing bottlenecks",
+        "Consider adding more bandwidth if consistently at capacity"
+      ],
+      "severity": "medium",
+      "tags": ["performance", "latency", "bandwidth"]
+    },
+    {
+      "id": "NW002",
+      "issue": "packet loss",
+      "symptoms": [
+        "connection drops",
+        "retransmissions",
+        "poor quality",
+        "jitter in voice/video",
+        "incomplete data transfers"
+      ],
+      "causes": [
+        "network congestion",
+        "hardware failure",
+        "signal interference",
+        "software bugs",
+        "overloaded devices"
+      ],
+      "solutions": [
+        "Check physical connections and replace damaged cables",
+        "Replace faulty hardware components (NICs, switches, routers)",
+        "Reduce network congestion through traffic management",
+        "Update firmware and drivers on network devices",
+        "Implement error correction protocols where applicable"
+      ],
+      "severity": "high",
+      "tags": ["connectivity", "reliability", "hardware"]
+    },
+    {
+      "id": "NW003",
+      "issue": "dns resolution failure",
+      "symptoms": [
+        "cannot resolve domain names",
+        "name resolution error",
+        "can access by IP but not hostname",
+        "intermittent connectivity to websites"
+      ],
+      "causes": [
+        "dns server issues",
+        "misconfiguration",
+        "connectivity problems",
+        "cache corruption",
+        "security software interference"
+      ],
+      "solutions": [
+        "Check DNS server settings and ensure they're correct",
+        "Flush DNS cache to remove potentially corrupted entries",
+        "Verify network connectivity to DNS servers",
+        "Try alternative DNS servers (e.g., 8.8.8.8 or 1.1.1.1)",
+        "Check for security software that might be blocking DNS queries"
+      ],
+      "severity": "medium",
+      "tags": ["dns", "configuration", "connectivity"]
+    },
+    {
+      "id": "NW004",
+      "issue": "unauthorized access",
+      "symptoms": [
+        "unusual login attempts",
+        "unexpected traffic patterns",
+        "modified configurations",
+        "security alerts",
+        "unusual outbound connections"
+      ],
+      "causes": [
+        "weak credentials",
+        "unpatched vulnerabilities",
+        "social engineering",
+        "insider threats",
+        "misconfigured access controls"
+      ],
+      "solutions": [
+        "Implement strong password policies and multi-factor authentication",
+        "Keep all systems and software up to date with security patches",
+        "Review and restrict access controls based on principle of least privilege",
+        "Enable comprehensive logging and monitoring",
+        "Conduct regular security audits and penetration testing"
+      ],
+      "severity": "critical",
+      "tags": ["security", "access control", "threats"]
+    },
+    {
+      "id": "NW005",
+      "issue": "bandwidth saturation",
+      "symptoms": [
+        "slow network for all users",
+        "consistent high utilization",
+        "periodic slowdowns",
+        "application timeouts",
+        "degraded service quality"
+      ],
+      "causes": [
+        "insufficient capacity",
+        "bandwidth-intensive applications",
+        "backup processes",
+        "video streaming",
+        "malware or unauthorized usage"
+      ],
+      "solutions": [
+        "Implement bandwidth monitoring to identify top consumers",
+        "Set up traffic shaping and QoS policies",
+        "Schedule bandwidth-intensive tasks during off-hours",
+        "Upgrade bandwidth capacity if consistently at limit",
+        "Investigate and address any unauthorized bandwidth usage"
+      ],
+      "severity": "medium",
+      "tags": ["bandwidth", "capacity", "performance"]
+    },
+    {
+      "id": "NW006",
+      "issue": "router failure",
+      "symptoms": [
+        "complete network outage",
+        "inability to connect to internet",
+        "router lights showing errors",
+        "overheating hardware",
+        "intermittent connectivity"
+      ],
+      "causes": [
+        "hardware malfunction",
+        "firmware issues",
+        "power problems",
+        "overheating",
+        "configuration corruption"
+      ],
+      "solutions": [
+        "Restart the router as a first troubleshooting step",
+        "Check for overheating and improve ventilation if needed",
+        "Update router firmware to the latest stable version",
+        "Reset to factory settings if configuration is corrupted",
+        "Replace the router if hardware failure is confirmed"
+      ],
+      "severity": "high",
+      "tags": ["hardware", "router", "connectivity"]
+    },
+    {
+      "id": "NW007",
+      "issue": "ip conflict",
+      "symptoms": [
+        "intermittent connectivity",
+        "error messages about duplicate IP",
+        "devices disconnecting from network",
+        "inability to access network resources"
+      ],
+      "causes": [
+        "static IP misconfiguration",
+        "DHCP server issues",
+        "multiple DHCP servers",
+        "devices with hardcoded IPs",
+        "expired DHCP leases not being released"
+      ],
+      "solutions": [
+        "Configure devices to use DHCP instead of static IPs where possible",
+        "Ensure only one DHCP server is active on the network",
+        "Set up DHCP reservations for devices that need consistent IPs",
+        "Check for rogue devices or unauthorized DHCP servers",
+        "Increase the DHCP scope if IP exhaustion is occurring"
+      ],
+      "severity": "medium",
+      "tags": ["ip", "configuration", "dhcp"]
+    }
+  ]
+}

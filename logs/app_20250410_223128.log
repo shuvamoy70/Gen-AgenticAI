@@ -1,0 +1,3 @@
+2025-04-10 22:31:28,693 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-10 22:31:28,694 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-10 22:31:28,694 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased

@@ -1,0 +1,13 @@
+2025-04-10 22:32:07,936 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-10 22:32:07,936 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-10 22:32:07,936 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased
+2025-04-10 22:32:40,811 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-10 22:32:40,813 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-10 22:32:40,813 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased
+2025-04-10 22:32:41,468 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-10 22:32:41,469 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-10 22:32:41,469 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased
+2025-04-10 22:32:41,470 - network_ai_assistant.app.agents.network_agent - INFO - Processing query: my internet is down for a long time. red light is blinking on my modem. not sure what happens
+2025-04-10 22:32:41,470 - network_ai_assistant.app.agents.network_agent - DEBUG - Generated plan: ['classify_query', 'search_knowledge_base', 'generate_response']
+2025-04-10 22:32:41,470 - network_ai_assistant.app.agents.network_agent - DEBUG - Plan execution results: {'steps_executed': ['classify_query', 'search_knowledge_base', 'generate_response'], 'tools_output': {'classify_query': {'timestamp': '2025-04-10T22:32:41.470952', 'categories': {'troubleshooting': 0.0, 'monitoring': 0.0, 'maintenance': 0.0, 'configuration': 0.0, 'general': 1.0}, 'top_category': 'general', 'confidence': 1.0, 'recommendations': ['Provide more specific details about your network issue']}, 'search_knowledge_base': {'timestamp': '2025-04-10T22:32:41.470964', 'results': [], 'recommendations': []}}}
+2025-04-10 22:32:41,471 - network_ai_assistant.app.agents.network_agent - INFO - Generated response for query

@@ -24,6 +24,7 @@ agent:
     max_steps: 5
   tools:
     enabled: true
+  use_advanced_chain: true  # Whether to use the NetworkAnalysisChain for complex queries
 
 # Streamlit Settings
 streamlit:

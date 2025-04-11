@@ -9,6 +9,7 @@ from typing import Dict, List, Any
 
 from app.models.model_manager import ModelManager
 from app.tools.network_tools import NetworkTools
+from app.chains.network_analysis_chain import NetworkAnalysisChain
 from app.utils.logger import get_logger
 from app.utils.config import get_setting
 
@@ -46,6 +47,7 @@ class NetworkAgent:
         # Initialize components
         self.model_manager = ModelManager(model_name)
         self.tools = NetworkTools()
+        self.analysis_chain = NetworkAnalysisChain(self.model_manager)
 
         # Set up memory with configured limit
         self.memory = []  # Simple memory to store conversation history
@@ -71,17 +73,28 @@ class NetworkAgent:
 
         query_lower = query.lower()
 
+        # Get agent settings from config
+        agent_config = get_setting('agent', {})
+        use_advanced_chain = False
+        if agent_config and 'use_advanced_chain' in agent_config:
+            use_advanced_chain = agent_config['use_advanced_chain']
+
+        # Check if the query is complex enough to use the analysis chain
+        is_complex = len(query.split()) > 10 or '?' in query
+
+        # Use the analysis chain for complex queries if enabled
+        if use_advanced_chain and is_complex:
+            logger.info("Using NetworkAnalysisChain for complex query")
+            return ["use_analysis_chain"]
+
+        # Otherwise use the simple rule-based approach
         if "anomaly" in query_lower or "unusual" in query_lower:
-            print("I am here 1")
             return ["analyze_network_traffic", "detect_anomalies", "generate_report"]
         elif "maintenance" in query_lower or "prevent" in query_lower:
-            print("I am here 2")
             return ["check_network_health", "predict_failures", "suggest_maintenance"]
         elif "troubleshoot" in query_lower or "problem" in query_lower or "issue" in query_lower:
-            print("I am here 3")
             return ["diagnose_issue", "search_knowledge_base", "suggest_solutions"]
         else:
-            print("I am here 5")
             return ["classify_query", "search_knowledge_base", "generate_response"]
 
     def _execute_plan(self, plan: List[str], query: str) -> Dict[str, Any]:
@@ -101,8 +114,27 @@ class NetworkAgent:
         }
 
         for step in plan:
+            # Special case for the analysis chain
+            if step == "use_analysis_chain":
+                # Run the full analysis chain
+                chain_results = self.analysis_chain.run(query)
+
+                # Store the chain results in the tools_output
+                results["chain_output"] = chain_results
+
+                # Also store individual components for compatibility
+                if "classification" in chain_results:
+                    results["tools_output"]["classify_query"] = chain_results["classification"]
+                if "data" in chain_results:
+                    for data_key, data_value in chain_results["data"].items():
+                        results["tools_output"][data_key] = data_value
+                if "recommendations" in chain_results:
+                    results["tools_output"]["recommendations"] = {
+                        "timestamp": chain_results.get("timestamp", ""),
+                        "recommendations": chain_results["recommendations"]
+                    }
             # Map steps to tool functions
-            if step == "analyze_network_traffic":
+            elif step == "analyze_network_traffic":
                 results["tools_output"][step] = self.tools.analyze_traffic()
             elif step == "detect_anomalies":
                 results["tools_output"][step] = self.tools.detect_anomalies()
@@ -142,25 +174,53 @@ class NetworkAgent:
         # In a real implementation, this would use the model to generate a coherent response
         # based on the results of the executed plan
 
-        # Extract relevant information from plan results
-        tools_output = plan_results["tools_output"]
-        steps = plan_results["steps_executed"]
+        # Check if we used the analysis chain
+        if "chain_output" in plan_results:
+            # Use the analysis chain results directly
+            chain_output = plan_results["chain_output"]
 
-        # Generate a response using the model
-        context = json.dumps(tools_output)
-        response_text = self.model_manager.generate_text(
-            prompt=f"Query: {query}\nContext: {context}\nProvide a helpful response."
-        )
+            # Extract the analysis summary
+            analysis = chain_output.get("analysis", {})
+            summary = analysis.get("summary", "Analysis not available")
 
-        # Extract recommended actions
-        actions = []
-        for _, output in tools_output.items():  # Use _ for unused variable
-            if "recommendations" in output:
-                actions.extend(output["recommendations"])
+            # Generate a response using the model with the analysis
+            context = json.dumps(chain_output)
+            response_text = self.model_manager.generate_text(
+                prompt=f"Query: {query}\nAnalysis: {summary}\nContext: {context}\nProvide a detailed and helpful response."
+            )
+
+            # Use the recommendations from the chain
+            actions = chain_output.get("recommendations", [])
+
+            # Add reasoning from the analysis
+            reasoning = f"I analyzed your query using our network analysis chain. {summary}"
+            if "potential_causes" in analysis:
+                causes = analysis["potential_causes"]
+                if causes:
+                    reasoning += f" Potential causes include: {', '.join(causes)}"
+        else:
+            # Extract relevant information from plan results
+            tools_output = plan_results["tools_output"]
+            steps = plan_results["steps_executed"]
+
+            # Generate a response using the model
+            context = json.dumps(tools_output)
+            response_text = self.model_manager.generate_text(
+                prompt=f"Query: {query}\nContext: {context}\nProvide a helpful response."
+            )
+
+            # Extract recommended actions
+            actions = []
+            for _, output in tools_output.items():  # Use _ for unused variable
+                if "recommendations" in output:
+                    actions.extend(output["recommendations"])
+
+            # Generate reasoning based on the steps executed
+            reasoning = f"I analyzed your query by following these steps: {', '.join(steps)}"
 
         return {
             "answer": response_text,
-            "reasoning": f"I analyzed your query by following these steps: {', '.join(steps)}",
+            "reasoning": reasoning,
             "actions": actions if actions else ["No specific actions recommended at this time."]
         }
 

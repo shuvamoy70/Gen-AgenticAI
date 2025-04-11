@@ -4,39 +4,80 @@ Network Tools Module
 This module provides tools for network analysis, troubleshooting, and management.
 These tools are used by the NetworkAgent to perform specific tasks.
 """
-import os
 import json
 import random
-from typing import Dict, List, Any, Optional
+import os.path
+from typing import Dict, List, Any
 from datetime import datetime
 
 from app.utils.logger import get_logger
+from app.utils.config import get_setting
 
 logger = get_logger(__name__)
 
 class NetworkTools:
     """
     A collection of tools for network analysis and management.
-    
+
     In a real implementation, these tools would interface with actual network
     monitoring systems, databases, and APIs. For this example, they return
     mock data to demonstrate the structure.
     """
-    
+
     def __init__(self):
         """Initialize the NetworkTools with any necessary configurations."""
-        # Load any configuration or data needed for the tools
+        # Get network tools settings from config
+        network_tools_config = get_setting('network_tools', {})
+
+        # Get knowledge base path from config or use default
+        self.knowledge_base_path = './data/knowledge_base.json'
+        if network_tools_config and 'knowledge_base_path' in network_tools_config:
+            self.knowledge_base_path = network_tools_config['knowledge_base_path']
+
+        # Get anomaly detection settings
+        self.anomaly_settings = {
+            'sensitivity': 'medium',
+            'threshold': 0.7
+        }
+        if network_tools_config and 'anomaly_detection' in network_tools_config:
+            self.anomaly_settings.update(network_tools_config['anomaly_detection'])
+
+        # Load the knowledge base
         self.knowledge_base = self._load_knowledge_base()
+
         logger.info("NetworkTools initialized")
-    
+
     def _load_knowledge_base(self) -> List[Dict[str, Any]]:
         """
         Load the network troubleshooting knowledge base.
-        
+
         Returns:
             A list of knowledge base entries
         """
-        # In a real implementation, this would load from a database or file
+        # Try to load from the configured file path
+        try:
+            if os.path.exists(self.knowledge_base_path):
+                with open(self.knowledge_base_path, 'r') as f:
+                    logger.info(f"Loading knowledge base from {self.knowledge_base_path}")
+                    kb_data = json.load(f)
+
+                    # Handle different JSON structures
+                    if isinstance(kb_data, list):
+                        # Direct list of entries
+                        return kb_data
+                    elif isinstance(kb_data, dict) and 'entries' in kb_data:
+                        # Structured with metadata and entries list
+                        logger.info(f"Knowledge base version: {kb_data.get('version', 'unknown')}")
+                        return kb_data['entries']
+                    else:
+                        logger.warning("Unknown knowledge base format. Using default knowledge base.")
+            else:
+                logger.warning(f"Knowledge base file not found at {self.knowledge_base_path}. Using default knowledge base.")
+        except Exception as e:
+            logger.error(f"Error loading knowledge base: {str(e)}. Using default knowledge base.")
+
+        # Default knowledge base if file loading fails
+        logger.info("Using default built-in knowledge base")
         return [
             {
                 "issue": "high latency",
@@ -69,11 +110,11 @@ class NetworkTools:
                 ]
             }
         ]
-    
+
     def analyze_traffic(self) -> Dict[str, Any]:
         """
         Analyze network traffic patterns.
-        
+
         Returns:
             Analysis results
         """
@@ -88,30 +129,49 @@ class NetworkTools:
             ],
             "unusual_patterns": random.choice([True, False])
         }
-    
+
     def detect_anomalies(self) -> Dict[str, Any]:
         """
         Detect anomalies in network traffic.
-        
+
         Returns:
             Detected anomalies
         """
-        # Mock implementation
+        # Get anomaly detection settings
+        sensitivity = self.anomaly_settings.get('sensitivity', 'medium')
+        threshold = self.anomaly_settings.get('threshold', 0.7)
+
+        # Adjust detection thresholds based on sensitivity setting
+        if sensitivity == 'low':
+            traffic_threshold = 0.7
+            connection_threshold = 0.85
+        elif sensitivity == 'high':
+            traffic_threshold = 0.3
+            connection_threshold = 0.5
+        else:  # medium
+            traffic_threshold = 0.5
+            connection_threshold = 0.7
+
+        logger.debug(f"Anomaly detection using sensitivity: {sensitivity}, threshold: {threshold}")
+
+        # Mock implementation with configurable thresholds
         anomalies = []
-        if random.random() > 0.5:
+        if random.random() > traffic_threshold:
             anomalies.append({
                 "type": "traffic spike",
                 "severity": random.choice(["low", "medium", "high"]),
-                "details": "Unusual increase in outbound traffic"
+                "details": "Unusual increase in outbound traffic",
+                "confidence": round(random.uniform(threshold, 1.0), 2)
             })
-        
-        if random.random() > 0.7:
+
+        if random.random() > connection_threshold:
             anomalies.append({
                 "type": "new connection pattern",
                 "severity": random.choice(["low", "medium", "high"]),
-                "details": "Multiple connection attempts to unusual ports"
+                "details": "Multiple connection attempts to unusual ports",
+                "confidence": round(random.uniform(threshold, 1.0), 2)
             })
-            
+
         return {
             "timestamp": datetime.now().isoformat(),
             "anomalies_detected": len(anomalies) > 0,
@@ -122,11 +182,11 @@ class NetworkTools:
                 "Review firewall rules"
             ] if anomalies else []
         }
-    
+
     def check_health(self) -> Dict[str, Any]:
         """
         Check the overall health of the network.
-        
+
         Returns:
             Network health status
         """
@@ -137,21 +197,21 @@ class NetworkTools:
             {"name": "Firewall", "status": random.choice(["healthy", "healthy", "healthy", "healthy"])},
             {"name": "DNS Server", "status": random.choice(["healthy", "healthy", "warning", "healthy"])}
         ]
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "overall_status": "warning" if any(c["status"] == "warning" for c in components) else "healthy",
             "components": components,
             "recommendations": [
-                f"Check {c['name']} for potential issues" 
+                f"Check {c['name']} for potential issues"
                 for c in components if c["status"] == "warning"
             ]
         }
-    
+
     def predict_failures(self) -> Dict[str, Any]:
         """
         Predict potential network component failures.
-        
+
         Returns:
             Failure predictions
         """
@@ -164,7 +224,7 @@ class NetworkTools:
                 "estimated_time": "24-48 hours",
                 "indicators": ["increasing error rate", "intermittent connectivity"]
             })
-            
+
         return {
             "timestamp": datetime.now().isoformat(),
             "predictions": predictions,
@@ -173,20 +233,20 @@ class NetworkTools:
                 for p in predictions
             ]
         }
-    
+
     def diagnose_issue(self, description: str) -> Dict[str, Any]:
         """
         Diagnose a network issue based on its description.
-        
+
         Args:
             description: Description of the issue
-            
+
         Returns:
             Diagnosis results
         """
         # Simple keyword matching for demonstration
         description_lower = description.lower()
-        
+
         # Find matching issues in the knowledge base
         matches = []
         for entry in self.knowledge_base:
@@ -198,10 +258,10 @@ class NetworkTools:
                     "matching_symptoms": symptom_matches,
                     "confidence": min(len(symptom_matches) / len(entry["symptoms"]) * 0.8 + 0.2, 0.95)
                 })
-        
+
         # Sort by confidence
         matches.sort(key=lambda x: x["confidence"], reverse=True)
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "possible_issues": matches[:2],  # Top 2 matches
@@ -210,26 +270,26 @@ class NetworkTools:
                 "Check system logs for errors"
             ]
         }
-    
+
     def search_knowledge_base(self, query: str) -> Dict[str, Any]:
         """
         Search the knowledge base for relevant information.
-        
+
         Args:
             query: The search query
-            
+
         Returns:
             Search results
         """
         query_lower = query.lower()
-        
+
         # Simple search implementation
         results = []
         for entry in self.knowledge_base:
             # Check if query matches issue or symptoms
             if entry["issue"] in query_lower or any(s in query_lower for s in entry["symptoms"]):
                 results.append(entry)
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "results": results,
@@ -237,20 +297,20 @@ class NetworkTools:
                 solution for entry in results for solution in entry["solutions"]
             ]
         }
-    
+
     def suggest_solutions(self, issue_description: str) -> Dict[str, Any]:
         """
         Suggest solutions for a described network issue.
-        
+
         Args:
             issue_description: Description of the issue
-            
+
         Returns:
             Suggested solutions
         """
         # First diagnose the issue
         diagnosis = self.diagnose_issue(issue_description)
-        
+
         # Then find solutions in the knowledge base
         solutions = []
         for possible_issue in diagnosis["possible_issues"]:
@@ -258,17 +318,17 @@ class NetworkTools:
             for entry in self.knowledge_base:
                 if entry["issue"] == issue_name:
                     solutions.extend(entry["solutions"])
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "solutions": solutions,
             "recommendations": solutions[:3]  # Top 3 solutions
         }
-    
+
     def generate_report(self) -> Dict[str, Any]:
         """
         Generate a network status report.
-        
+
         Returns:
             Network status report
         """
@@ -276,7 +336,7 @@ class NetworkTools:
         traffic = self.analyze_traffic()
         health = self.check_health()
         anomalies = self.detect_anomalies()
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "report_sections": [
@@ -290,21 +350,21 @@ class NetworkTools:
                 "Investigate detected anomalies" if anomalies["anomalies_detected"] else "Continue regular monitoring"
             ]
         }
-    
+
     def suggest_maintenance(self) -> Dict[str, Any]:
         """
         Suggest maintenance tasks based on network health.
-        
+
         Returns:
             Suggested maintenance tasks
         """
         # Check health and predictions
         health = self.check_health()
         predictions = self.predict_failures()
-        
+
         # Generate maintenance suggestions
         tasks = []
-        
+
         # Add tasks for components with warning status
         for component in health["components"]:
             if component["status"] == "warning":
@@ -313,7 +373,7 @@ class NetworkTools:
                     "task": f"Inspect and troubleshoot {component['name']}",
                     "deadline": "Within 48 hours"
                 })
-        
+
         # Add tasks for predicted failures
         for prediction in predictions["predictions"]:
             tasks.append({
@@ -321,7 +381,7 @@ class NetworkTools:
                 "task": f"Preventive maintenance for {prediction['component']}",
                 "deadline": prediction["estimated_time"]
             })
-        
+
         # Add routine maintenance tasks
         if random.random() > 0.5:
             tasks.append({
@@ -329,36 +389,36 @@ class NetworkTools:
                 "task": "Update firmware on network devices",
                 "deadline": "Within 2 weeks"
             })
-            
+
         if random.random() > 0.7:
             tasks.append({
                 "priority": "low",
                 "task": "Review and optimize network configuration",
                 "deadline": "Within 1 month"
             })
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "maintenance_tasks": tasks,
             "recommendations": [
-                f"{task['task']} ({task['priority']} priority)" 
+                f"{task['task']} ({task['priority']} priority)"
                 for task in sorted(tasks, key=lambda x: {"high": 0, "medium": 1, "low": 2}[x["priority"]])
             ]
         }
-    
+
     def classify_query(self, query: str) -> Dict[str, Any]:
         """
         Classify a user query into categories.
-        
+
         Args:
             query: The user query
-            
+
         Returns:
             Classification results
         """
         # Simple rule-based classification for demonstration
         query_lower = query.lower()
-        
+
         categories = {
             "troubleshooting": 0.0,
             "monitoring": 0.0,
@@ -366,27 +426,27 @@ class NetworkTools:
             "configuration": 0.0,
             "general": 0.2  # Base probability for general category
         }
-        
+
         # Check for keywords
         if any(word in query_lower for word in ["problem", "issue", "error", "troubleshoot", "fix"]):
             categories["troubleshooting"] += 0.6
-            
+
         if any(word in query_lower for word in ["monitor", "watch", "track", "observe", "status"]):
             categories["monitoring"] += 0.6
-            
+
         if any(word in query_lower for word in ["maintain", "update", "upgrade", "prevent"]):
             categories["maintenance"] += 0.6
-            
+
         if any(word in query_lower for word in ["configure", "setup", "install", "change"]):
             categories["configuration"] += 0.6
-        
+
         # Normalize to ensure sum is close to 1.0
         total = sum(categories.values())
         normalized = {k: v / total for k, v in categories.items()}
-        
+
         # Get the top category
         top_category = max(normalized.items(), key=lambda x: x[1])[0]
-        
+
         return {
             "timestamp": datetime.now().isoformat(),
             "categories": normalized,

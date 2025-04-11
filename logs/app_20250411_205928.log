@@ -1,0 +1,17 @@
+2025-04-11 20:59:28,522 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-11 20:59:28,523 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-11 20:59:28,524 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased
+2025-04-11 20:59:28,682 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-11 20:59:28,682 - network_ai_assistant.app.models.model_manager - WARNING - Transformers library not available. Using mock implementations.
+2025-04-11 20:59:28,682 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-11 20:59:28,682 - network_ai_assistant.app.tools.network_tools - INFO - NetworkTools initialized
+2025-04-11 20:59:28,682 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased
+2025-04-11 20:59:28,682 - network_ai_assistant.app.agents.network_agent - INFO - NetworkAgent initialized with model: HuggingFace/distilbert-base-uncased
+2025-04-11 20:59:28,683 - network_ai_assistant.app.agents.network_agent - INFO - Processing query: Network is down
+2025-04-11 20:59:28,683 - network_ai_assistant.app.agents.network_agent - INFO - Processing query: Network is down
+2025-04-11 20:59:28,684 - network_ai_assistant.app.agents.network_agent - DEBUG - Generated plan: ['classify_query', 'search_knowledge_base', 'generate_response']
+2025-04-11 20:59:28,684 - network_ai_assistant.app.agents.network_agent - DEBUG - Generated plan: ['classify_query', 'search_knowledge_base', 'generate_response']
+2025-04-11 20:59:28,684 - network_ai_assistant.app.agents.network_agent - DEBUG - Plan execution results: {'steps_executed': ['classify_query', 'search_knowledge_base', 'generate_response'], 'tools_output': {'classify_query': {'timestamp': '2025-04-11T20:59:28.684206', 'categories': {'troubleshooting': 0.0, 'monitoring': 0.0, 'maintenance': 0.0, 'configuration': 0.0, 'general': 1.0}, 'top_category': 'general', 'confidence': 1.0, 'recommendations': ['Provide more specific details about your network issue']}, 'search_knowledge_base': {'timestamp': '2025-04-11T20:59:28.684214', 'results': [], 'recommendations': []}}}
+2025-04-11 20:59:28,684 - network_ai_assistant.app.agents.network_agent - DEBUG - Plan execution results: {'steps_executed': ['classify_query', 'search_knowledge_base', 'generate_response'], 'tools_output': {'classify_query': {'timestamp': '2025-04-11T20:59:28.684206', 'categories': {'troubleshooting': 0.0, 'monitoring': 0.0, 'maintenance': 0.0, 'configuration': 0.0, 'general': 1.0}, 'top_category': 'general', 'confidence': 1.0, 'recommendations': ['Provide more specific details about your network issue']}, 'search_knowledge_base': {'timestamp': '2025-04-11T20:59:28.684214', 'results': [], 'recommendations': []}}}
+2025-04-11 20:59:28,684 - network_ai_assistant.app.agents.network_agent - INFO - Generated response for query
+2025-04-11 20:59:28,684 - network_ai_assistant.app.agents.network_agent - INFO - Generated response for query
